@@ -13,10 +13,10 @@ Handsontable.TableView = function (instance) {
   instance.rootElement.addClass('handsontable');
 
   var table = document.createElement('TABLE');
-      table.className = 'htCore';
+  table.className = 'htCore';
 
-      table.appendChild(document.createElement('THEAD'));
-      table.appendChild(document.createElement('TBODY'));
+  table.appendChild(document.createElement('THEAD'));
+  table.appendChild(document.createElement('TBODY'));
 
   var $table = $(table);
 
@@ -328,6 +328,82 @@ Handsontable.TableView.prototype.render = function () {
 Handsontable.TableView.prototype.applyCellTypeMethod = function (methodName, td, row, col) {
   var prop = this.instance.colToProp(col)
     , cellProperties = this.instance.getCellMeta(row, col);
+
+  if (methodName === 'editor' && cellProperties.editorTemplate) {
+    var that = this;
+
+    var appendEditorTemplate = function (useOriginalValue) {
+      if (typeof cellProperties.editorTemplate === 'string') {
+        $td[0].innerHTML = cellProperties.editorTemplate;
+      }
+      else {
+        $td.empty().append(cellProperties.editorTemplate.clone());
+      }
+      var $interfaceNode = $td.find('input, select, textarea, *[tabindex]').eq(0);
+      var interfaceNode = $interfaceNode[0];
+      if (useOriginalValue) {
+        interfaceNode.value = that.instance.getDataAtRowProp(row, prop);
+      }
+      /*$interfaceNode.on('change', function () {
+        console.log('change', interfaceNode.value);
+      })
+      $interfaceNode.on('blur', function () {
+        console.log('blur', row, col, this.value);
+        //that.instance.setDataAtCell(row, col, this.value);
+      })*/
+      $interfaceNode.on('mousedown', function () {
+        if (event.target === this) {
+//        event.preventDefault();
+          event.stopPropagation();
+        }
+      });
+      $interfaceNode.focus();
+    };
+
+    var $td = $(td);
+    $td.off('.editorTemplate').one('keydown.handsontable.editorTemplate', function (event) {
+      var ctrlDown = (event.ctrlKey || event.metaKey) && !event.altKey; //catch CTRL but not right ALT (which in some systems triggers ALT+CTRL)
+      if (Handsontable.helper.isPrintableChar(event.keyCode)) {
+        if (!ctrlDown) { //disregard CTRL-key shortcuts
+          appendEditorTemplate();
+        }
+      }
+      else if (event.keyCode === 113) { //f2
+        appendEditorTemplate(true);
+        event.stopImmediatePropagation();
+        event.preventDefault(); //prevent Opera from opening Go to Page dialog
+      }
+      else if (event.keyCode === 13 && that.instance.getSettings().enterBeginsEditing) { //enter
+        appendEditorTemplate(true);
+        event.preventDefault(); //prevent new line at the end of textarea
+        event.stopImmediatePropagation();
+      }
+    });
+
+
+    var onDblClick = function onDblClick() {
+      if ($td.find('input, select, textarea, *[tabindex]').length === 0) {
+        appendEditorTemplate(true);
+      }
+    };
+
+    this.instance.view.wt.update('onCellDblClick', onDblClick);
+
+
+    return function () {
+      var $interfaceNode = $td.find('input, select, textarea, *[tabindex]').eq(0);
+      if ($interfaceNode.length) {
+        that.instance.setDataAtCell(row, col, $interfaceNode[0].value);
+        $interfaceNode.remove();
+      }
+      $td.off('.editorTemplate');
+      that.applyCellTypeMethod('renderer', td, row, col);
+      td.focus();
+      that.instance.view.wt.update('onCellDblClick', null);
+    }
+  }
+
+
   if (cellProperties[methodName]) {
     return cellProperties[methodName](this.instance, td, row, col, prop, this.instance.getDataAtRowProp(row, prop), cellProperties);
   }

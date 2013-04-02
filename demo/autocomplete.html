@@ -144,7 +144,9 @@
                 items: 4 //`options` overrides `defaults` defined in bootstrap typeahead
               }
             },
-            {type: 'numeric'},
+            {type: 'numeric',
+            editorTemplate: '<input type="number" style="width: 50px; height: 16px">'
+            },
             {
               type: {renderer: myAutocompleteRenderer, editor: Handsontable.AutocompleteEditor},
               source: ["yellow", "red", "orange", "green", "blue", "gray", "black", "white"],

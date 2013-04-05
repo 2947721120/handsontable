@@ -40,10 +40,10 @@
   <script class="common">
     function getCarData() {
       return [
-        ["Nissan", 2009, "black", "black"],
-        ["Nissan", 2006, "blue", "blue"],
-        ["Chrysler", 2004, "yellow", "black"],
-        ["Volvo", 2012, "white", "gray"]
+        ["Nissan", 2009, "black", "black", true],
+        ["Nissan", 2006, "blue", "blue", false],
+        ["Chrysler", 2004, "yellow", "black", true],
+        ["Volvo", 2012, "white", "gray", true]
       ];
     }
   </script>
@@ -133,7 +133,6 @@
         $("#example1").handsontable({
           data: getCarData(),
           startRows: 7,
-          startCols: 4,
           colHeaders: ["Car", "Year", "Chassis color", "Bumper color"],
           columns: [
             {
@@ -144,8 +143,14 @@
                 items: 4 //`options` overrides `defaults` defined in bootstrap typeahead
               }
             },
-            {type: 'numeric',
-            editorTemplate: '<input type="number" style="width: 50px; height: 16px">'
+            {
+              type: 'numeric',
+              width: 60,
+              editorTemplate: '<input type="number" style="width: 50px; height: 16px">'
+            },
+            {
+              template: '<select><option value="yellow">yellow</option><option value="red">red</option><option value="orange">orange</option></select>'
+              //does not expand with keyboard in Win/Chrome due to bug: https://code.google.com/p/chromium/issues/detail?id=1945
             },
             {
               type: {renderer: myAutocompleteRenderer, editor: Handsontable.AutocompleteEditor},
@@ -154,10 +159,8 @@
               strict: false
             },
             {
-              type: {renderer: myAutocompleteRenderer, editor: Handsontable.AutocompleteEditor},
-              source: ["yellow", "red", "orange", "green", "blue", "gray", "black", "white"],
-              highlighter: colorHighlighter,
-              strict: false
+              template: '<input type="checkbox">'
+//              template: 'Ma ka ron'
             }
           ]
         });

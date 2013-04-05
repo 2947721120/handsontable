@@ -329,52 +329,105 @@ Handsontable.TableView.prototype.applyCellTypeMethod = function (methodName, td,
   var prop = this.instance.colToProp(col)
     , cellProperties = this.instance.getCellMeta(row, col);
 
-  if (methodName === 'editor' && cellProperties.editorTemplate) {
-    var that = this;
+  var tpl;
+  if (methodName === 'editor') {
+    tpl = cellProperties.editorTemplate;
+  }
+  else {
+    tpl = cellProperties.template;
+  }
+  if(methodName === 'editor' && cellProperties.template) {
+return;
+  }
 
-    var appendEditorTemplate = function (useOriginalValue) {
-      if (typeof cellProperties.editorTemplate === 'string') {
-        $td[0].innerHTML = cellProperties.editorTemplate;
+  if (tpl) {
+    var that = this;
+    var $td = $(td);
+
+    var appendTpl = function (useOriginalValue) {
+      if (typeof tpl === 'string') {
+        td.innerHTML = tpl;
       }
       else {
-        $td.empty().append(cellProperties.editorTemplate.clone());
+        $td.empty().append(tpl.clone());
       }
+//      console.log("wstawiam tpl ?", td, tpl);
+//      return;
+
       var $interfaceNode = $td.find('input, select, textarea, *[tabindex]').eq(0);
       var interfaceNode = $interfaceNode[0];
       if (useOriginalValue) {
-        interfaceNode.value = that.instance.getDataAtRowProp(row, prop);
+        var val = that.instance.getDataAtRowProp(row, prop);
+        if(typeof interfaceNode.checked !== 'undefined') {
+          interfaceNode.checked = val;
+        }
+        else {
+          interfaceNode.value = val;
+        }
+
       }
-      /*$interfaceNode.on('change', function () {
-        console.log('change', interfaceNode.value);
-      })
-      $interfaceNode.on('blur', function () {
-        console.log('blur', row, col, this.value);
-        //that.instance.setDataAtCell(row, col, this.value);
-      })*/
-      $interfaceNode.on('mousedown', function () {
-        if (event.target === this) {
+      $interfaceNode.on('change', function () {
+        var val;
+        if(typeof this.checked !== 'undefined') {
+          val = this.checked;
+        }
+        else {
+          val = this.value;
+        }
+
+        console.log('change', typeof val, val);
+        that.instance.setDataAtCell(row, col, val);
+        if (this.nodeName === 'SELECT') {
+          that.instance.destroyEditor();
+        }
+      });
+      /*$interfaceNode.on('blur', function () {
+       console.log('blur', row, col, this.value);
+       //that.instance.setDataAtCell(row, col, this.value);
+       })*/
+      $interfaceNode.on('mousedown', function (event) {
+//        if (event.target === this) {
+
 //        event.preventDefault();
+//          event.stopPropagation();
+//        }
+        event.stopPropagation();
+      });
+      $interfaceNode.on('keydown', function (event) {
+//        if (event.target === this) {
+
+//        event.preventDefault();
+//          event.stopPropagation();
+//        }
+        if (event.keyCode === 13 && that.instance.getSettings().enterBeginsEditing) { //enter
+          return;
+        }
+        if (this.nodeName === 'SELECT') {
           event.stopPropagation();
         }
       });
-      $interfaceNode.focus();
+      if(methodName === 'editor') {
+      interfaceNode.focus();
+      setTimeout(function () {
+        interfaceNode.focus(); //needed in FF
+      }, 0);
+      }
     };
 
-    var $td = $(td);
     $td.off('.editorTemplate').one('keydown.handsontable.editorTemplate', function (event) {
       var ctrlDown = (event.ctrlKey || event.metaKey) && !event.altKey; //catch CTRL but not right ALT (which in some systems triggers ALT+CTRL)
       if (Handsontable.helper.isPrintableChar(event.keyCode)) {
         if (!ctrlDown) { //disregard CTRL-key shortcuts
-          appendEditorTemplate();
+          appendTpl();
         }
       }
       else if (event.keyCode === 113) { //f2
-        appendEditorTemplate(true);
+        appendTpl(true);
         event.stopImmediatePropagation();
         event.preventDefault(); //prevent Opera from opening Go to Page dialog
       }
       else if (event.keyCode === 13 && that.instance.getSettings().enterBeginsEditing) { //enter
-        appendEditorTemplate(true);
+        appendTpl(true);
         event.preventDefault(); //prevent new line at the end of textarea
         event.stopImmediatePropagation();
       }
@@ -383,28 +436,34 @@ Handsontable.TableView.prototype.applyCellTypeMethod = function (methodName, td,
 
     var onDblClick = function onDblClick() {
       if ($td.find('input, select, textarea, *[tabindex]').length === 0) {
-        appendEditorTemplate(true);
+        appendTpl(true);
       }
     };
 
     this.instance.view.wt.update('onCellDblClick', onDblClick);
 
-
-    return function () {
-      var $interfaceNode = $td.find('input, select, textarea, *[tabindex]').eq(0);
-      if ($interfaceNode.length) {
-        that.instance.setDataAtCell(row, col, $interfaceNode[0].value);
-        $interfaceNode.remove();
+    if (methodName === 'renderer') {
+      console.log("TD", td.innerHTML);
+      appendTpl(true);
+      console.log("TD2", td.innerHTML);
+    }
+    else {
+      return function () {
+        var $interfaceNode = $td.find('input, select, textarea, *[tabindex]').eq(0);
+        if ($interfaceNode.length) {
+//          that.instance.setDataAtCell(row, col, $interfaceNode[0].value);
+          $interfaceNode.remove();
+        }
+        $td.off('.editorTemplate');
+        that.applyCellTypeMethod('renderer', td, row, col);
+        td.focus();
+        that.instance.view.wt.update('onCellDblClick', null);
       }
-      $td.off('.editorTemplate');
-      that.applyCellTypeMethod('renderer', td, row, col);
-      td.focus();
-      that.instance.view.wt.update('onCellDblClick', null);
     }
   }
 
 
-  if (cellProperties[methodName]) {
+  else if (cellProperties[methodName]) {
     return cellProperties[methodName](this.instance, td, row, col, prop, this.instance.getDataAtRowProp(row, prop), cellProperties);
   }
 };

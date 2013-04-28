@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>Editor templates - Handsontable</title>
+
+  <!--
+  Loading Handsontable (full distribution that includes all dependencies apart from jQuery)
+  -->
+  <script src="../lib/jquery.min.js"></script>
+  <script src="../dist/jquery.handsontable.full.js"></script>
+  <link rel="stylesheet" media="screen" href="../dist/jquery.handsontable.full.css">
+
+  <!--
+  Loading demo dependencies. They are used here only to enhance the examples on this page
+  -->
+  <link rel="stylesheet" media="screen" href="css/samples.css">
+  <script src="js/samples.js"></script>
+  <script src="js/highlight/highlight.pack.js"></script>
+  <link rel="stylesheet" media="screen" href="js/highlight/styles/github.css">
+
+  <!--
+  Facebook open graph. Don't copy this to your project :)
+  -->
+  <meta property="og:title" content="Editor templates">
+  <meta property="og:description"
+        content="">
+  <meta property="og:url" content="http://handsontable.com/demo/editor_templates.html">
+  <meta property="og:image" content="http://handsontable.com/demo/image/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="409">
+  <meta property="og:image:height" content="164">
+  <link rel="canonical" href="http://handsontable.com/demo/editor_templates.html">
+
+  <!--
+  Google Analytics for GitHub Page. Don't copy this to your project :)
+  -->
+  <script src="js/ga.js"></script>
+
+  <script class="common">
+    function getCarData() {
+      return [
+        ["Nissan", 2009, "black", "black", true],
+        ["Nissan", 2006, "blue", "blue", false],
+        ["Chrysler", 2004, "yellow", "black", true],
+        ["Volvo", 2012, "white", "gray", true]
+      ];
+    }
+  </script>
+</head>
+
+<body>
+<a href="http://github.com/warpech/jquery-handsontable">
+  <img style="position: absolute; top: 0; right: 0; border: 0;"
+       src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"/>
+</a>
+
+<div id="container">
+  <div class="columnLayout">
+
+    <div class="rowLayout">
+      <div class="descLayout">
+        <div class="pad">
+          <h1><a href="../index.html">Handsontable</a></h1>
+
+          <div class="tagline">a minimalistic Excel-like <span class="nobreak">data grid</span> editor
+            for HTML, JavaScript &amp; jQuery
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rowLayout">
+      <div class="descLayout">
+        <div class="pad">
+          <a name="lazy"></a>
+
+          <h2>Editor templates</h2>
+
+          <p>This example how to use <code>template</code> and <code>editor_template</code> to use your own HTML as cell
+            renderer/editor in a simple way.</p>
+
+          <ul>
+            <li><strong>Year</strong> is a column with <code>input type="number"</code> editor</li>
+            <li><strong>Chassis color</strong> is a column with <code>select</code> renderer and editor</li>
+            <li><strong>4WD</strong> is a column with <code>input type="checkbox"</code> renderer and editor</li>
+          </ul>
+
+          <div id="example1"></div>
+
+          <p>
+            <button name="dump" data-dump="#example1" title="Prints current data source to Firebug/Chrome Dev Tools">
+              Dump
+              data to console
+            </button>
+          </p>
+        </div>
+      </div>
+
+      <div class="codeLayout">
+        <div class="pad">
+          <div class="jsFiddle">
+            <div class="jsFiddleLink">Edit in jsFiddle</div>
+          </div>
+
+          <script class="common">
+            function myAutocompleteRenderer(instance, td, row, col, prop, value, cellProperties) {
+              Handsontable.AutocompleteCell.renderer.apply(this, arguments);
+              td.style.fontStyle = 'italic';
+              td.title = 'Type to show the list of options';
+            }
+
+            function colorHighlighter(item) {
+              var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+              var label = item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                return '<strong>' + match + '</strong>';
+              });
+              return '<span style="margin-right: 10px; background-color: ' + item + '">&nbsp;&nbsp;&nbsp;</span>' + label;
+            }
+          </script>
+
+          <script>
+            $("#example1").handsontable({
+              data: getCarData(),
+              startRows: 7,
+              colHeaders: ["Car", "Year", "Chassis color", "Bumper color", "4WD"],
+              columns: [
+                {
+                  type: {renderer: myAutocompleteRenderer, editor: Handsontable.AutocompleteEditor},
+                  source: ["BMW", "Chrysler", "Nissan", "Suzuki", "Toyota", "Volvo"],
+                  strict: false,
+                  options: {
+                    items: 4 //`options` overrides `defaults` defined in bootstrap typeahead
+                  }
+                },
+                {
+                  type: 'numeric',
+                  width: 60,
+                  editorTemplate: '<input type="number" style="width: 50px; height: 16px">'
+                },
+                {
+                  template: '<select><option value="yellow">yellow</option><option value="red">red</option><option value="orange">orange</option></select>'
+                  //does not expand with keyboard in Win/Chrome due to bug: https://code.google.com/p/chromium/issues/detail?id=1945
+                },
+                {
+                  type: {renderer: myAutocompleteRenderer, editor: Handsontable.AutocompleteEditor},
+                  source: ["yellow", "red", "orange", "green", "blue", "gray", "black", "white"],
+                  highlighter: colorHighlighter,
+                  strict: false
+                },
+                {
+                  template: '<input type="checkbox">'
+                }
+              ]
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <div class="rowLayout">
+      <div class="descLayout noMargin">
+        <div class="pad"><p>For more examples, head back to the <a href="../index.html">main page</a>.</p>
+
+          <p class="small">Handsontable &copy; 2012 Marcin Warpechowski and contributors.<br> Code and documentation
+            licensed under the The MIT License.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

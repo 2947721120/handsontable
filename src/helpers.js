@@ -93,6 +93,15 @@ Handsontable.helper.randomString = function () {
 };
 
 /**
+ * Check number sign.
+ * @param {Number} x
+ * @return {Number} 1, -1 or 0, depending of x sign
+ */
+Handsontable.helper.signum = function (x) {
+  return x > 0 ? 1 : x < 0 ? -1 : 0;
+};
+
+/**
  * Inherit without without calling parent constructor, and setting `Child.prototype.constructor` to `Child` instead of `Parent`.
  * Creates temporary dummy function to call it as constructor.
  * Described in ticket: https://github.com/warpech/jquery-handsontable/pull/516

@@ -1384,6 +1384,8 @@ Handsontable.Core = function (rootElement, settings) {
     }
   };
 
+  this.editproxy = editproxy;
+
   this.init = function () {
     self.runHooks('beforeInit');
     editproxy.init();

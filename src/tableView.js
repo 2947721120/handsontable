@@ -29,7 +29,11 @@ Handsontable.TableView = function (instance) {
   });
 
   var isMouseDown
-    , dragInterval;
+    , dragInterval
+    , selection = {
+      size      : [0, 0],
+      triggered : false
+    };
 
   $documentElement.on('mouseup.' + instance.guid, function (event) {
     if (instance.selection.isInProgress() && event.which === 1) { //is left mouse button
@@ -221,12 +225,53 @@ Handsontable.TableView = function (instance) {
     },
     onCellMouseOver: function (event, coords, TD) {
       var coordsObj = {row: coords[0], col: coords[1]};
-      if (isMouseDown) {
+      if (selection.triggered) {
+        var current, delta_row, delta_col, fix_row, fix_col;
+
+        current = instance.getSelected();
+        delta_row = coords[0] - current[0];
+        delta_col = coords[1] - current[1];
+
+        fix_row = - Handsontable.helper.signum(delta_row);
+        fix_col = - Handsontable.helper.signum(delta_col);
+
+        instance.selection.transformStart(delta_row, delta_col);
+        instance.selection.transformEnd(delta_row + selection.size.row + fix_row, delta_col + selection.size.col + fix_col);
+
+      }
+      else if (isMouseDown) {
         instance.selection.setRangeEnd(coordsObj);
       }
       else if (instance.autofill.handle && instance.autofill.handle.isDragged) {
         instance.autofill.handle.isDragged++;
         instance.autofill.showBorder(coords);
+      }
+    },
+    onSelectionBorderMouseDown : function (event) {
+      selection.triggered = true;
+
+      selection.start = instance.getSelected();
+      selection.size  = {
+        row: selection.start[2] - selection.start[0],
+        col: selection.start[3] - selection.start[1]
+      };
+
+      instance.editproxy.setCopyableText();
+    },
+    onSelectionBorderMouseUp : function (event) {
+      if (selection.triggered) {
+
+        if (!event.ctrlKey && !event.metaKey) {
+          instance.populateFromArray(
+            {row: selection.start[0], col: selection.start[1]},
+            [[null]],
+            {row: selection.start[0] + selection.size.row, col: selection.start[1] + selection.size.col},
+            "moveCell"
+          );
+        }
+
+        instance.copyPaste.triggerPaste(event);
+        selection.triggered = false;
       }
     },
     onCellCornerMouseDown: function (event) {

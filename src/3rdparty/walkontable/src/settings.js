@@ -36,6 +36,8 @@ function WalkontableSettings(instance, settings) {
     onCellMouseDown: null,
     onCellMouseOver: null,
     onCellDblClick: null,
+    onSelectionBorderMouseDown: null,
+    onSelectionBorderMouseUp: null,
     onCellCornerMouseDown: null,
     onCellCornerDblClick: null,
     onDraw: null,

@@ -172,6 +172,7 @@
 
 /* border line */
 .handsontable .wtBorder {
+  cursor: move;
   position: absolute;
   font-size: 0;
 }

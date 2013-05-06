@@ -12,6 +12,10 @@ function WalkontableEvent(instance) {
   var onMouseDown = function (event) {
     var cell = that.parentCell(event.target);
 
+    if (that.wtDom.hasClass(event.target, 'wtBorder')) {
+      that.instance.getSetting('onSelectionBorderMouseDown', event);
+    }
+
     if (cell.TD && cell.TD.nodeName === 'TD') {
       if (that.instance.hasSetting('onCellMouseDown')) {
         that.instance.getSetting('onCellMouseDown', event, cell.coords, cell.TD);
@@ -49,6 +53,8 @@ function WalkontableEvent(instance) {
   var onMouseUp = function (event) {
     if (event.button !== 2) { //if not right mouse button
       var cell = that.parentCell(event.target);
+
+      that.instance.getSetting('onSelectionBorderMouseUp', event);
 
       if (cell.TD && cell.TD.nodeName === 'TD') {
         dblClickOrigin.shift();

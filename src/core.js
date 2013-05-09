@@ -1958,6 +1958,37 @@ Handsontable.Core = function (rootElement, settings) {
   };
 
   /**
+   * Return values from `row`, `col` to `row2`, `col2`
+   * @param {Number} row
+   * @param {Number} col
+   * @param {Number} row2
+   * @param {Number} col2
+   * @public
+   * @return {Array}
+   */
+  this.getDataAtCells = function (row, col, row2, col2) {
+    if(row2 < row || col2 < col) {
+      throw new Error('Second pair of getDataAtCells parameters must be bigger or equal to first pair');
+    }
+
+    var i
+      , arr = []
+      , arr_row;
+    while(row < row2 + 1) {
+      arr_row = [];
+      i = 0;
+      while(col + i < col2 + 1) {
+        arr_row.push(self.getDataAtCell(row, col + i));
+        i++;
+      }
+      arr.push(arr_row);
+      row++;
+    }
+
+    return arr;
+  };
+
+  /**
    * Return value at `row`, `prop`
    * @param {Number} row
    * @param {String} prop

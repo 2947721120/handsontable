@@ -31,8 +31,8 @@ Handsontable.TableView = function (instance) {
   var isMouseDown
     , dragInterval
     , selection = {
-      size      : [0, 0],
-      triggered : false
+      delta: [0, 0],
+      triggered: false
     };
 
   $documentElement.on('mouseup.' + instance.guid, function (event) {
@@ -143,6 +143,8 @@ Handsontable.TableView = function (instance) {
     }
   };
 
+  var lastMouseOver;
+
   var walkontableConfig = {
     table: table,
     stretchH: this.settings.stretchH,
@@ -199,6 +201,14 @@ Handsontable.TableView = function (instance) {
           color: 'red',
           style: 'solid'
         }
+      },
+      move: {
+        className: 'move',
+        border: {
+          width: 1,
+          color: 'black',
+          style: 'dash'
+        }
       }
     },
     onCellMouseDown: function (event, coords, TD) {
@@ -225,19 +235,16 @@ Handsontable.TableView = function (instance) {
     },
     onCellMouseOver: function (event, coords, TD) {
       var coordsObj = {row: coords[0], col: coords[1]};
+
       if (selection.triggered) {
-        var current, delta_row, delta_col, fix_row, fix_col;
+        var current = instance.getSelected();
+        var delta_row = coords[0] - current[0] - selection.delta[0];
+        var delta_col = coords[1] - current[1] - selection.delta[1];
 
-        current = instance.getSelected();
-        delta_row = coords[0] - current[0];
-        delta_col = coords[1] - current[1];
-
-        fix_row = - Handsontable.helper.signum(delta_row);
-        fix_col = - Handsontable.helper.signum(delta_col);
-
-        instance.selection.transformStart(delta_row, delta_col);
-        instance.selection.transformEnd(delta_row + selection.size.row + fix_row, delta_col + selection.size.col + fix_col);
-
+        that.wt.selections.move.clear();
+        that.wt.selections.move.add([current[0] + delta_row, current[1] + delta_col]);
+        that.wt.selections.move.add([current[2] + delta_row, current[3] + delta_col]);
+        that.render();
       }
       else if (isMouseDown) {
         instance.selection.setRangeEnd(coordsObj);
@@ -246,32 +253,47 @@ Handsontable.TableView = function (instance) {
         instance.autofill.handle.isDragged++;
         instance.autofill.showBorder(coords);
       }
+
+      lastMouseOver = coords;
     },
-    onSelectionBorderMouseDown : function (event) {
+    onSelectionBorderMouseDown: function (event) {
       selection.triggered = true;
 
-      selection.start = instance.getSelected();
-      selection.size  = {
-        row: selection.start[2] - selection.start[0],
-        col: selection.start[3] - selection.start[1]
-      };
-
-      instance.editproxy.setCopyableText();
+      var current = instance.getSelected();
+      selection.delta[0] = Math.min(lastMouseOver[0] - current[0], current[2] - current[0]);
+      selection.delta[1] = Math.min(lastMouseOver[1] - current[1], current[3] - current[1]);
     },
-    onSelectionBorderMouseUp : function (event) {
+    onSelectionBorderMouseUp: function (event) {
       if (selection.triggered) {
 
         if (!event.ctrlKey && !event.metaKey) {
+          var current = instance.getSelected();
+          var delta_row = lastMouseOver[0] - current[0] - selection.delta[0];
+          var delta_col = lastMouseOver[1] - current[1] - selection.delta[1];
+
+          var source = instance.getDataAtCells(current[0], current[1], current[2], current[3]);
+
           instance.populateFromArray(
-            {row: selection.start[0], col: selection.start[1]},
+            {row: current[0], col: current[1]},
             [[null]],
-            {row: selection.start[0] + selection.size.row, col: selection.start[1] + selection.size.col},
-            "moveCell"
+            {row: current[2], col: current[3]},
+            "moveCellFrom"
           );
+
+          instance.populateFromArray(
+            {row: current[0] + delta_row, col: current[1] + delta_col},
+            source,
+            {row: current[2] + delta_row, col: current[3] + delta_col},
+            "moveCellTo"
+          );
+
+          instance.selectCell(current[0] + delta_row, current[1] + delta_col, current[2] + delta_row, current[3] + delta_col);
         }
 
-        instance.copyPaste.triggerPaste(event);
         selection.triggered = false;
+
+        that.wt.selections.move.clear();
+        that.render();
       }
     },
     onCellCornerMouseDown: function (event) {

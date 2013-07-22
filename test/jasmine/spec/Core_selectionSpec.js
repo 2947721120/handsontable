@@ -387,4 +387,42 @@ describe('Core_selection', function () {
     expect(isEditorVisible()).toEqual(true);
     $input.remove();
   });
+
+  it('should fire afterSelection event', function(){
+    var afterSelection = jasmine.createSpy('afterSelection')
+
+    handsontable({
+      'afterSelection' : afterSelection
+    });
+
+    selectCell(0,0);
+
+    expect(afterSelection).toHaveBeenCalled();
+    expect(afterSelection.callCount).toEqual(1);
+    expect(afterSelection).toHaveBeenCalledWith(0, 0, 0, 0, void 0);
+
+    afterSelection.reset();
+
+    selectCell(1, 0);
+
+    expect(afterSelection).toHaveBeenCalled();
+    expect(afterSelection.callCount).toEqual(1);
+    expect(afterSelection).toHaveBeenCalledWith(1, 0, 1, 0, void 0);
+
+  });
+
+  it('should fire afterDeselect event', function(){
+    var afterDeselect = jasmine.createSpy('afterDeselect')
+
+    handsontable({
+      'afterDeselect' : afterDeselect
+    });
+
+    selectCell(0,0);
+    selectCell(1,0);
+
+    expect(afterDeselect).toHaveBeenCalled();
+    expect(afterDeselect.callCount).toEqual(1);
+
+  });
 });

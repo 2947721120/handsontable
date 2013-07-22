@@ -2542,6 +2542,11 @@ Handsontable.Core = function (rootElement, userSettings) {
       document.activeElement.blur(); //needed or otherwise prepare won't focus the cell. selectionSpec tests this (should move focus to selected cell)
     }
     instance.listen();
+
+    if(selection.isSelected()){
+       instance.deselectCell();
+    }
+
     if (typeof endRow === "undefined") {
       selection.setRangeEnd({row: row, col: col}, scrollToCell);
     }

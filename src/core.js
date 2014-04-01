@@ -2065,7 +2065,6 @@ DefaultSettings.prototype = {
   readOnlyCellClassName: 'htDimmed',
   fragmentSelection: false,
   readOnly: false,
-  nativeScrollbars: false,
   type: 'text',
   copyable: true,
   debug: false //shows debug overlays in Walkontable

@@ -1655,8 +1655,7 @@ describe('ContextMenu', function () {
         colWidths: 50, //can also be a number or a function
         rowHeaders: true,
         colHeaders: true,
-        contextMenu: true,
-        nativeScrollbars: true
+        contextMenu: true
       });
 
       contextMenu();
@@ -1674,8 +1673,7 @@ describe('ContextMenu', function () {
         colWidths: 50, //can also be a number or a function
         rowHeaders: true,
         colHeaders: true,
-        contextMenu: true,
-        nativeScrollbars: true
+        contextMenu: true
       });
 
       this.$wrapper.scrollTop(300);
@@ -1697,8 +1695,7 @@ describe('ContextMenu', function () {
         colWidths: 50, //can also be a number or a function
         rowHeaders: true,
         colHeaders: true,
-        contextMenu: true,
-        nativeScrollbars: true
+        contextMenu: true
       });
 
       selectCell(15, 3);
@@ -1730,8 +1727,7 @@ describe('ContextMenu', function () {
         colWidths: 50, //can also be a number or a function
         rowHeaders: true,
         colHeaders: true,
-        contextMenu: true,
-        nativeScrollbars: true
+        contextMenu: true
       });
 
       selectCell(15, 3);

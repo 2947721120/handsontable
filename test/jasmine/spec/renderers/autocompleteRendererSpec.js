@@ -27,9 +27,11 @@ describe('AutocompleteRenderer', function () {
     }, 'Cell validation', 1000);
 
     runs(function () {
-      var html = getCell(2, 2).innerHTML;
-      expect(html).toContain('string');
-      expect(html).toContain('\u25BC');
+      	var html = getCell(2, 2).innerHTML;
+      	expect(html).toContain('string');
+
+		var arrow = getCell(2, 2).querySelector('.htAutocompleteArrow');
+		expect(arrow).toBeTruthy();
     });
 
   });

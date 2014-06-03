@@ -271,16 +271,24 @@ AutocompleteRenderer down arrow
 */
 
 .handsontable .htAutocompleteArrow {
-  float: right;
-  font-size: 10px;
-  color: #EEE;
-  cursor: default;
-  width: 16px;
-  text-align: center;
+	float: right;
+    font-size: 10px;
+    color: #EEE;
+    cursor: default;
+    width: 16px;
+    text-align: center;
 }
 
-.handsontable td .htAutocompleteArrow:hover {
-  color: #777;
+.handsontable .htAutocompleteArrow:after{
+	content: '▼';
+	position: absolute;
+	font-size: 10px;
+	color: #EEE;
+	right: 6px;
+}
+
+.handsontable .htAutocompleteArrow:hover:after{
+	color: #777
 }
 
 /*

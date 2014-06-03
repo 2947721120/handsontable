@@ -1,18 +1,12 @@
 (function (Handsontable) {
 
-  var clonableWRAPPER = document.createElement('DIV');
-  clonableWRAPPER.className = 'htAutocompleteWrapper';
+//  var clonableWRAPPER = document.createElement('DIV');
+//  clonableWRAPPER.className = 'htAutocompleteWrapper';
 
   var clonableARROW = document.createElement('DIV');
   clonableARROW.className = 'htAutocompleteArrow';
-  clonableARROW.appendChild(document.createTextNode('\u25BC'));
+//  clonableARROW.appendChild(document.createTextNode('\u25BC'));
 //this is faster than innerHTML. See: https://github.com/warpech/jquery-handsontable/wiki/JavaScript-&-DOM-performance-tips
-
-  var wrapTdContentWithWrapper = function(TD, WRAPPER){
-    WRAPPER.innerHTML = TD.innerHTML;
-    Handsontable.Dom.empty(TD);
-    TD.appendChild(WRAPPER);
-  };
 
   /**
    * Autocomplete renderer
@@ -26,7 +20,6 @@
    */
   var AutocompleteRenderer = function (instance, TD, row, col, prop, value, cellProperties) {
 
-    var WRAPPER = clonableWRAPPER.cloneNode(true); //this is faster than createElement
     var ARROW = clonableARROW.cloneNode(true); //this is faster than createElement
 
     Handsontable.renderers.TextRenderer(instance, TD, row, col, prop, value, cellProperties);
@@ -47,7 +40,8 @@
         instance.view.wt.getSetting('onCellDblClick');
       };
 
-      instance.rootElement.on('mousedown.htAutocompleteArrow', '.htAutocompleteArrow', instance.acArrowListener); //this way we don't bind event listener to each arrow. We rely on propagation instead
+		instance.rootElement.on('mousedown.htAutocompleteArrow', '.htAutocompleteArrow', instance.acArrowListener); //this way we don't bind event listener to each arrow. We rely on propagation instead
+
 
       //We need to unbind the listener after the table has been destroyed
       instance.addHookOnce('afterDestroy', function () {

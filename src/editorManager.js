@@ -286,7 +286,6 @@
 
       var row = priv.selRange.highlight.row;
       var col = priv.selRange.highlight.col;
-      var prop = instance.colToProp(col);
       var td = instance.getCell(row, col);
       var originalValue = instance.getDataAtCell(row, col);
       var cellProperties = instance.getCellMeta(row, col);
@@ -294,7 +293,7 @@
       var editorClass = instance.getCellEditor(cellProperties);
       activeEditor = Handsontable.editors.getEditor(editorClass, instance);
 
-      activeEditor.prepare(row, col, prop, td, originalValue, cellProperties);
+      activeEditor.prepare(row, col, cellProperties.prop, td, originalValue, cellProperties);
 
     };
 

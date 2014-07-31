@@ -90,15 +90,13 @@
             var row = samples[i].strings[j].row;
 
             var cellProperties = instance.getCellMeta(row, col);
-            cellProperties.col = col;
-            cellProperties.row = row;
 
             var renderer = instance.getCellRenderer(cellProperties);
 
             var tr = document.createElement('tr');
             var td = document.createElement('td');
 
-            renderer(instance, td, row, col, instance.colToProp(col), samples[i].strings[j].value, cellProperties);
+            renderer(instance, td, row, col, cellProperties.prop, samples[i].strings[j].value, cellProperties);
             r++;
             tr.appendChild(td);
             tmp.tbody.appendChild(tr);

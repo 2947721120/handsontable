@@ -334,19 +334,18 @@ Handsontable.Core = function (rootElement, userSettings) {
     inProgress: false,
 
     /**
-     * Sets inProgress to true. This enables onSelectionEnd and onSelectionEndByProp to function as desired
+     * Sets inProgress to true. This enables afterSelectionEnd to function as desired
      */
     begin: function () {
       instance.selection.inProgress = true;
     },
 
     /**
-     * Sets inProgress to false. Triggers onSelectionEnd and onSelectionEndByProp
+     * Sets inProgress to false. Triggers afterSelectionEnd
      */
     finish: function () {
       var sel = instance.getSelected();
       Handsontable.hooks.run(instance, "afterSelectionEnd", sel[0], sel[1], sel[2], sel[3]);
-      Handsontable.hooks.run(instance, "afterSelectionEndByProp", sel[0], instance.colToProp(sel[1]), sel[2], instance.colToProp(sel[3]));
       instance.selection.inProgress = false;
     },
 
@@ -400,7 +399,6 @@ Handsontable.Core = function (rootElement, userSettings) {
 
       //trigger handlers
       Handsontable.hooks.run(instance, "afterSelection", priv.selRange.from.row, priv.selRange.from.col, priv.selRange.to.row, priv.selRange.to.col);
-      Handsontable.hooks.run(instance, "afterSelectionByProp", priv.selRange.from.row, datamap.colToProp(priv.selRange.from.col), priv.selRange.to.row, datamap.colToProp(priv.selRange.to.col));
 
       if (scrollToCell !== false && instance.view.mainViewIsActive()) {
         instance.view.scrollViewport(coords);
@@ -635,7 +633,7 @@ Handsontable.Core = function (rootElement, userSettings) {
       }
       else {
         var row = changes[i][0];
-        var col = datamap.propToCol(changes[i][1]);
+        var col = changes[i][1];
         var logicalCol = instance.runHooksAndReturn('modifyCol', col); //column order may have changes, so we need to translate physical col index (stored in datasource) to logical (displayed to user)
         var cellProperties = instance.getCellMeta(row, logicalCol);
 
@@ -695,7 +693,7 @@ Handsontable.Core = function (rootElement, userSettings) {
 
   /**
    * Internal function to apply changes. Called after validateChanges
-   * @param {Array} changes Array in form of [row, prop, oldValue, newValue]
+   * @param {Array} changes Array in form of [row, col, oldValue, newValue]
    * @param {String} source String that identifies how this change will be described in changes array (useful in onChange callback)
    */
   function applyChanges(changes, source) {
@@ -722,7 +720,7 @@ Handsontable.Core = function (rootElement, userSettings) {
       }
 
       if (instance.dataType === 'array' && priv.settings.minSpareCols) {
-        while (datamap.propToCol(changes[i][1]) > instance.countCols() - 1) {
+        while (changes[i][1] > instance.countCols() - 1) {
           datamap.createCol();
         }
       }
@@ -750,14 +748,14 @@ Handsontable.Core = function (rootElement, userSettings) {
 
     if (typeof validator == 'function') {
 
-      value = Handsontable.hooks.execute(instance, "beforeValidate", value, cellProperties.row, cellProperties.prop, source);
+      value = Handsontable.hooks.execute(instance, "beforeValidate", value, cellProperties.row, cellProperties.col, source);
 
       // To provide consistent behaviour, validation should be always asynchronous
       setTimeout(function () {
         validator.call(cellProperties, value, function (valid) {
           cellProperties.valid = valid;
 
-          valid = Handsontable.hooks.execute(instance, "afterValidate", valid, value, cellProperties.row, cellProperties.prop, source);
+          valid = Handsontable.hooks.execute(instance, "afterValidate", valid, value, cellProperties.row, cellProperties.col, source);
 
           callback(valid);
         });
@@ -772,7 +770,7 @@ Handsontable.Core = function (rootElement, userSettings) {
 
   };
 
-  function setDataInputToArray(row, prop_or_col, value) {
+  function setDataInputToArray(row, col, value) {
     if (typeof row === "object") { //is it an array of changes
       return row;
     }
@@ -781,7 +779,7 @@ Handsontable.Core = function (rootElement, userSettings) {
     }
     else {
       return [
-        [row, prop_or_col, value]
+        [row, col, value]
       ];
     }
   }
@@ -798,50 +796,12 @@ Handsontable.Core = function (rootElement, userSettings) {
     var input = setDataInputToArray(row, col, value)
       , i
       , ilen
-      , changes = []
-      , prop;
+      , changes = [];
 
     for (i = 0, ilen = input.length; i < ilen; i++) {
       if (typeof input[i] !== 'object') {
         throw new Error('Method `setDataAtCell` accepts row number or changes array of arrays as its first parameter');
       }
-      if (typeof input[i][1] !== 'number') {
-        throw new Error('Method `setDataAtCell` accepts row and column number as its parameters. If you want to use object property name, use method `setDataAtRowProp`');
-      }
-      prop = datamap.colToProp(input[i][1]);
-      changes.push([
-        input[i][0],
-        prop,
-        datamap.get(input[i][0], prop),
-        input[i][2]
-      ]);
-    }
-
-    if (!source && typeof row === "object") {
-      source = col;
-    }
-
-    validateChanges(changes, source, function () {
-      applyChanges(changes, source);
-    });
-  };
-
-
-  /**
-   * Set data at given row property
-   * @public
-   * @param {Number|Array} row or array of changes in format [[row, prop, value], ...]
-   * @param {String} prop or source String
-   * @param {String} value
-   * @param {String} source String that identifies how this change will be described in changes array (useful in onChange callback)
-   */
-  this.setDataAtRowProp = function (row, prop, value, source) {
-    var input = setDataInputToArray(row, prop, value)
-      , i
-      , ilen
-      , changes = [];
-
-    for (i = 0, ilen = input.length; i < ilen; i++) {
       changes.push([
         input[i][0],
         input[i][1],
@@ -851,7 +811,7 @@ Handsontable.Core = function (rootElement, userSettings) {
     }
 
     if (!source && typeof row === "object") {
-      source = prop;
+      source = col;
     }
 
     validateChanges(changes, source, function () {
@@ -1259,26 +1219,6 @@ Handsontable.Core = function (rootElement, userSettings) {
   };
 
   /**
-   * Returns property name associated with column number
-   * @param {Number} col
-   * @public
-   * @return {String}
-   */
-  this.colToProp = function (col) {
-    return datamap.colToProp(col);
-  };
-
-  /**
-   * Returns column number associated with property name
-   * @param {String} prop
-   * @public
-   * @return {Number}
-   */
-  this.propToCol = function (prop) {
-    return datamap.propToCol(prop);
-  };
-
-  /**
    * Return value at `row`, `col`
    * @param {Number} row
    * @param {Number} col
@@ -1286,18 +1226,7 @@ Handsontable.Core = function (rootElement, userSettings) {
    * @return value (mixed data type)
    */
   this.getDataAtCell = function (row, col) {
-    return datamap.get(row, datamap.colToProp(col));
-  };
-
-  /**
-   * Return value at `row`, `prop`
-   * @param {Number} row
-   * @param {String} prop
-   * @public
-   * @return value (mixed data type)
-   */
-  this.getDataAtRowProp = function (row, prop) {
-    return datamap.get(row, prop);
+    return datamap.get(row, col);
   };
 
   /**
@@ -1309,17 +1238,6 @@ Handsontable.Core = function (rootElement, userSettings) {
   this.getDataAtCol = function (col) {
     var out = [];
     return out.concat.apply(out, datamap.getRange(new WalkontableCellCoords(0, col), new WalkontableCellCoords(priv.settings.data.length - 1, col), datamap.DESTINATION_RENDERER));
-  };
-
-  /**
-   * Return value at `prop`
-   * @param {String} prop
-   * @public
-   * @return {Array} value (mixed data type)
-   */
-  this.getDataAtProp = function (prop) {
-    var out = [];
-    return out.concat.apply(out, datamap.getRange(new WalkontableCellCoords(0, datamap.propToCol(prop)), new WalkontableCellCoords(priv.settings.data.length - 1, datamap.propToCol(prop)), datamap.DESTINATION_RENDERER));
   };
 
   /**
@@ -1379,7 +1297,7 @@ Handsontable.Core = function (rootElement, userSettings) {
    * @param {Number} col
    * @param {Object} prop
    */
-  this.setCellMetaObject = function (row, col, prop) {
+  this.setCellMetaObject = function (row, col, col_) {
     if (typeof prop === 'object') {
       for (var i in prop) {
         var key = i,
@@ -1475,7 +1393,7 @@ Handsontable.Core = function (rootElement, userSettings) {
    * @returns {int} - translated column index
    */
   function translateColIndex(col){
-    return Handsontable.hooks.execute(instance, 'modifyCol', col); // warning: this must be done after datamap.colToProp
+    return Handsontable.hooks.execute(instance, 'modifyCol', col);
   }
 
   var rendererLookup = Handsontable.helper.cellMethodLookupFactory('renderer');
@@ -1872,14 +1790,6 @@ Handsontable.Core = function (rootElement, userSettings) {
 
     instance.selection.finish();
     return true;
-  };
-
-  this.selectCellByProp = function (row, prop, endRow, endProp, scrollToCell) {
-    arguments[1] = datamap.propToCol(arguments[1]);
-    if (typeof arguments[3] !== "undefined") {
-      arguments[3] = datamap.propToCol(arguments[3]);
-    }
-    return instance.selectCell.apply(instance, arguments);
   };
 
   /**

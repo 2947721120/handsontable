@@ -349,7 +349,36 @@
       return hasAlignment;
     };
 
-    this.checkSelectionReadOnlyConsistency = function (hot) {
+		if(!this.instance.getSettings().allowInsertRow) {
+			delete this.defaultOptions.items.row_above;
+			delete this.defaultOptions.items.row_below;
+			delete this.defaultOptions.items.hsep1;
+		}
+
+		if(!this.instance.getSettings().allowInsertColumn) {
+			delete this.defaultOptions.items.col_left;
+			delete this.defaultOptions.items.col_right;
+			delete this.defaultOptions.items.hsep2
+		}
+
+		var removeRow = false;
+		var removeCol = false;
+
+		if(!this.instance.getSettings().allowRemoveRow) {
+			delete this.defaultOptions.items.remove_row;
+			removeRow = true;
+		}
+
+		if(!this.instance.getSettings().allowRemoveColumn) {
+			delete this.defaultOptions.items.remove_col;
+			removeCol = true;
+		}
+
+		if (removeRow && removeCol) {
+			delete this.defaultOptions.items.hsep3;
+		}
+
+    this.checkSelectionReadOnlyConsistency = function(hot) {
       var atLeastOneReadOnly = false;
 
       hot.getSelectedRange().forAll(function (r, c) {

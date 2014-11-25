@@ -350,15 +350,19 @@
     };
 
 		if(!this.instance.getSettings().allowInsertRow) {
-			delete this.defaultOptions.items.row_above;
-			delete this.defaultOptions.items.row_below;
-			delete this.defaultOptions.items.hsep1;
+      var rowAboveIndex = findIndexByKey(this.defaultOptions.items,'row_above');
+      this.defaultOptions.items.splice(rowAboveIndex,1);
+      var rowBelowIndex = findIndexByKey(this.defaultOptions.items,'row_below');
+      this.defaultOptions.items.splice(rowBelowIndex,1);
+      this.defaultOptions.items.splice(rowBelowIndex,1);// FOR SEPARATOR
 		}
 
 		if(!this.instance.getSettings().allowInsertColumn) {
-			delete this.defaultOptions.items.col_left;
-			delete this.defaultOptions.items.col_right;
-			delete this.defaultOptions.items.hsep2
+      var colLeftIndex = findIndexByKey(this.defaultOptions.items,'col_left');
+      this.defaultOptions.items.splice(colLeftIndex,1);
+      var colRightIndex = findIndexByKey(this.defaultOptions.items,'col_right');
+      this.defaultOptions.items.splice(colRightIndex,1);
+      this.defaultOptions.items.splice(colRightIndex,1);// FOR SEPARATOR
 		}
 
 		var removeRow = false;
@@ -831,6 +835,14 @@
     for (var i = 0, ilen = items.length; i < ilen; i++) {
       if (items[i].key === key) {
         return items[i];
+      }
+    }
+  }
+
+  function findIndexByKey(items, key) {
+    for (var i = 0, ilen = items.length; i < ilen; i++) {
+      if (items[i].key === key) {
+        return i;
       }
     }
   }

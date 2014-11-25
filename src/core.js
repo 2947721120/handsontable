@@ -304,7 +304,6 @@ Handsontable.Core = function (rootElement, userSettings) {
         case 'overwrite' :
         default:
           // overwrite and other not specified options
-
           current.row = start.row;
           current.col = start.col;
 
@@ -334,7 +333,6 @@ Handsontable.Core = function (rootElement, userSettings) {
             current.col = start.col;
             clen = input[r] ? input[r].length : 0;
             for (c = 0; c < clen; c++) {
-//              if ((end && current.col > end.col) || (current.col >= priv.settings.maxCols)) {
               if ((end && current.col > end.col) || (!priv.settings.allowInsertColumn && current.col > instance.countCols() - 1) || (current.col >= priv.settings.maxCols)) {
                 break;
               }
@@ -535,7 +533,6 @@ Handsontable.Core = function (rootElement, userSettings) {
       }
 
       if (priv.selRange.highlight.col + delta.col > instance.countCols() - 1) {
-//        if (force && priv.settings.minSpareCols > 0) {
         if (force && priv.settings.allowInsertColumn > 0) {
           instance.alter("insert_col", instance.countCols());
         }

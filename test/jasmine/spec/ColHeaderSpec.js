@@ -224,10 +224,20 @@ describe('ColHeader', function () {
       fixedColumnsLeft: 2
     });
 
-    var topHeaderExample = $(".ht_clone_top").find('thead tr:first-child th:nth-child(1)'),
-      masterHeaderExample = $(".ht_master").find('thead tr:first-child th:nth-child(3)');
+    var cornerHeaderExample = $(".ht_clone_corner").find('thead tr:first-child th:nth-child(1)'),
+      masterHeaderExample = $(".ht_master").find('thead tr:first-child th:nth-child(3)'),
+      cornerHeight = cornerHeaderExample.height(),
+      masterHeight = masterHeaderExample.height();
 
-    expect(topHeaderExample.height()).toEqual(masterHeaderExample.height());
+    expect(cornerHeight).toEqual(masterHeight);
+
+    hot.updateSettings({
+      colHeaders: ['a','a','a','a','a']
+    });
+
+    expect(cornerHeaderExample.height()).toEqual(masterHeaderExample.height());
+    expect(cornerHeaderExample.height()).toBeLessThan(cornerHeight);
+
   });
 
 });

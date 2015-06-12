@@ -2,6 +2,7 @@
 import * as dom from './../../../dom.js';
 import {eventManager as eventManagerObject} from './../../../eventManager.js';
 import {WalkontableCellCoords} from './cell/coords.js';
+import {WalkontableOverlay} from './overlay/_base.js';
 
 
 function WalkontableBorder(instance, settings) {
@@ -279,7 +280,8 @@ WalkontableBorder.prototype.appear = function (corners) {
 
   };
 
-  if (instance.cloneOverlay instanceof WalkontableTopOverlay || instance.cloneOverlay instanceof WalkontableCornerOverlay) {
+  if (WalkontableOverlay.isOverlayTypeOf(instance.cloneOverlay, WalkontableOverlay.CLONE_TOP) ||
+      WalkontableOverlay.isOverlayTypeOf(instance.cloneOverlay, WalkontableOverlay.CLONE_CORNER)) {
     ilen = instance.getSetting('fixedRowsTop');
   } else {
     ilen = instance.wtTable.getRenderedRowsCount();

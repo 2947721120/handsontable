@@ -3,6 +3,7 @@ import {defineGetter} from './../../../../helpers.js';
 import {eventManager as eventManagerObject} from './../../../../eventManager.js';
 //import {Walkontable} from './../core.js';
 
+const registeredOverlays = {};
 
 /**
  * Creates an overlay over the original Walkontable instance. The overlay renders the clone of the original Walkontable
@@ -21,8 +22,22 @@ class WalkontableOverlay {
   /**
    * @type {String}
    */
+  static get CLONE_BOTTOM() {
+    return 'bottom';
+  }
+
+  /**
+   * @type {String}
+   */
   static get CLONE_LEFT() {
     return 'left';
+  }
+
+  /**
+   * @type {String}
+   */
+  static get CLONE_RIGHT() {
+    return 'right';
   }
 
   /**
@@ -47,10 +62,46 @@ class WalkontableOverlay {
   static get CLONE_TYPES() {
     return [
       WalkontableOverlay.CLONE_TOP,
+      WalkontableOverlay.CLONE_BOTTOM,
       WalkontableOverlay.CLONE_LEFT,
+      WalkontableOverlay.CLONE_RIGHT,
       WalkontableOverlay.CLONE_CORNER,
       WalkontableOverlay.CLONE_DEBUG
     ];
+  }
+
+  /**
+   * Register overlay class.
+   *
+   * @param {String} type Overlay type, one of the CLONE_TYPES value
+   * @param {WalkontableOverlay} overlayClass Overlay class extended from base overlay class {@link WalkontableOverlay}
+   */
+  static registerOverlay(type, overlayClass) {
+    if (WalkontableOverlay.CLONE_TYPES.indexOf(type) === -1) {
+      throw new Error(`Unsupported overlay (${type}).`);
+    }
+    registeredOverlays[type] = overlayClass;
+  }
+
+  /**
+   * Create new instance of overlay type
+   *
+   * @param {String} type Overlay type, one of the CLONE_TYPES value
+   * @param {Walkontable} wot Walkontable instance
+   */
+  static createOverlay(type, wot) {
+    return new registeredOverlays[type](wot);
+  }
+
+  /**
+   * Checks if overlay object (`overlay`) is instance of overlay type (`type`)
+   *
+   * @param {WalkontableOverlay} overlay Overlay object
+   * @param {String} type Overlay type, one of the CLONE_TYPES value
+   * @returns {Boolean}
+   */
+  static isOverlayTypeOf(overlay, type) {
+    return overlay instanceof registeredOverlays[type];
   }
 
   /**

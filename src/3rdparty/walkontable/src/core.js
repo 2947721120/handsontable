@@ -7,7 +7,17 @@ import {WalkontableScroll} from './scroll.js';
 import {WalkontableSettings} from './settings.js';
 import {WalkontableTable} from './table.js';
 import {WalkontableViewport} from './viewport.js';
+import {WalkontableOverlay} from './overlay/_base.js';
+import {WalkontableTopOverlay} from './overlay/top.js';
+import {WalkontableLeftOverlay} from './overlay/left.js';
+import {WalkontableDebugOverlay} from './overlay/debug.js';
+import {WalkontableCornerOverlay} from './overlay/corner.js';
 
+
+WalkontableOverlay.registerOverlay(WalkontableOverlay.CLONE_TOP, WalkontableTopOverlay);
+WalkontableOverlay.registerOverlay(WalkontableOverlay.CLONE_LEFT, WalkontableLeftOverlay);
+WalkontableOverlay.registerOverlay(WalkontableOverlay.CLONE_CORNER, WalkontableCornerOverlay);
+WalkontableOverlay.registerOverlay(WalkontableOverlay.CLONE_DEBUG, WalkontableDebugOverlay);
 
 /**
  * @class Walkontable

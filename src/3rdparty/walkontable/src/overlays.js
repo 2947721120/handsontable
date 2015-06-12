@@ -1,9 +1,5 @@
 import * as dom from './../../../dom.js';
 import {EventManager} from './../../../eventManager.js';
-import {WalkontableCornerOverlay} from './overlay/corner.js';
-import {WalkontableDebugOverlay} from './overlay/debug.js';
-import {WalkontableLeftOverlay} from './overlay/left.js';
-import {WalkontableTopOverlay} from './overlay/top.js';
 
 
 /**
@@ -25,14 +21,16 @@ class WalkontableOverlays {
 
     this.mainTableScrollableElement = dom.getScrollableElement(this.wot.wtTable.TABLE);
 
-    this.topOverlay = new WalkontableTopOverlay(this.wot);
-    this.leftOverlay = new WalkontableLeftOverlay(this.wot);
+    this.topOverlay = WalkontableOverlay.createOverlay(WalkontableOverlay.CLONE_TOP, this.wot);
+    this.leftOverlay = WalkontableOverlay.createOverlay(WalkontableOverlay.CLONE_LEFT, this.wot);
+
+    console.log(WalkontableOverlay.createOverlay(WalkontableOverlay.CLONE_BOTTOM, this.wot));
 
     if (this.topOverlay.needFullRender && this.leftOverlay.needFullRender) {
-      this.topLeftCornerOverlay = new WalkontableCornerOverlay(this.wot);
+      this.topLeftCornerOverlay = WalkontableOverlay.createOverlay(WalkontableOverlay.CLONE_CORNER, this.wot);
     }
     if (this.wot.getSetting('debug')) {
-      this.debug = new WalkontableDebugOverlay(this.wot);
+      this.debug = WalkontableOverlay.createOverlay(WalkontableOverlay.CLONE_DEBUG, this.wot);
     }
 
     this.destroyed = false;

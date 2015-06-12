@@ -24,8 +24,6 @@ class WalkontableOverlays {
     this.topOverlay = WalkontableOverlay.createOverlay(WalkontableOverlay.CLONE_TOP, this.wot);
     this.leftOverlay = WalkontableOverlay.createOverlay(WalkontableOverlay.CLONE_LEFT, this.wot);
 
-    console.log(WalkontableOverlay.createOverlay(WalkontableOverlay.CLONE_BOTTOM, this.wot));
-
     if (this.topOverlay.needFullRender && this.leftOverlay.needFullRender) {
       this.topLeftCornerOverlay = WalkontableOverlay.createOverlay(WalkontableOverlay.CLONE_CORNER, this.wot);
     }

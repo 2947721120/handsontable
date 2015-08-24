@@ -49,6 +49,12 @@ class WalkontableViewport {
     let height = 0;
 
     if (trimmingContainer === window) {
+      let heightSetting = this.wot.getSetting('height');
+
+      if(heightSetting !== null) {
+        return heightSetting;
+      }
+
       height = document.documentElement.clientHeight;
 
     } else {
@@ -75,10 +81,17 @@ class WalkontableViewport {
     }
 
     if (trimmingContainer === window && totalColumns > 0 && this.sumColumnWidths(0, totalColumns - 1) > width) {
+      let widthSetting = this.wot.getSetting('width');
+
+      if(widthSetting !== null) {
+        return widthSetting;
+      }
+
       // in case sum of column widths is higher than available stylesheet width, let's assume using the whole window
       // otherwise continue below, which will allow stretching
       // this is used in `scroll_window.html`
       // TODO test me
+
       return document.documentElement.clientWidth;
     }
 
@@ -274,6 +287,7 @@ class WalkontableViewport {
     let height;
     let pos;
     let fixedRowsTop;
+    let currentScrollableElement = this.wot.wtOverlays.mainTableScrollableElement;
 
     this.rowHeaderWidth = NaN;
 
@@ -282,7 +296,12 @@ class WalkontableViewport {
     } else {
       height = this.getViewportHeight();
     }
-    pos = getScrollTop(this.wot.wtOverlays.mainTableScrollableElement) - this.wot.wtOverlays.topOverlay.getTableParentOffset();
+
+    if(this.wot.wtOverlays.topOverlay.trimmingContainer === window && this.wot.getSetting('width') !== null) {
+      currentScrollableElement = window;
+    }
+
+    pos = getScrollTop(currentScrollableElement) - this.wot.wtOverlays.topOverlay.getTableParentOffset();
 
     if (pos < 0) {
       pos = 0;
@@ -321,7 +340,7 @@ class WalkontableViewport {
 
     this.columnHeaderHeight = NaN;
 
-    pos = this.wot.wtOverlays.leftOverlay.getScrollPosition() - this.wot.wtOverlays.topOverlay.getTableParentOffset();
+    pos = this.wot.wtOverlays.leftOverlay.getScrollPosition() - this.wot.wtOverlays.leftOverlay.getTableParentOffset();
 
     if (pos < 0) {
       pos = 0;

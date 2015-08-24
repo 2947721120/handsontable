@@ -1,4 +1,3 @@
-
 import {
   addClass,
   getScrollbarWidth,
@@ -8,7 +7,7 @@ import {
   outerWidth,
   removeClass,
   setOverlayPosition,
-    } from './../../../../helpers/dom/element';
+} from './../../../../helpers/dom/element';
 import {WalkontableOverlay} from './_base';
 
 
@@ -50,15 +49,20 @@ class WalkontableLeftOverlay extends WalkontableOverlay {
       let right = Math.ceil(box.right);
       let finalLeft;
       let finalTop;
+      let heightSetting = this.wot.getSetting('height');
+      let widthSetting = this.wot.getSetting('width');
 
       finalTop = this.wot.wtTable.hider.style.top;
       finalTop = finalTop === '' ? 0 : finalTop;
 
-      if (left < 0 && (right - overlayRoot.offsetWidth) > 0) {
-        finalLeft = -left;
-      } else {
-        finalLeft = 0;
+      if (widthSetting === null) {
+        if (left < 0 && (right - overlayRoot.offsetWidth) > 0) {
+          finalLeft = -left;
+        } else {
+          finalLeft = 0;
+        }
       }
+
       headerPosition = finalLeft;
       finalLeft = finalLeft + 'px';
 
@@ -231,6 +235,10 @@ class WalkontableLeftOverlay extends WalkontableOverlay {
    */
   getTableParentOffset() {
     if (this.trimmingContainer === window) {
+      if(this.wot.getSetting('width') !== null) {
+        return 0;
+      }
+
       return this.wot.wtTable.holderOffset.left;
 
     } else {

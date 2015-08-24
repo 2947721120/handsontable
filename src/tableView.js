@@ -386,7 +386,9 @@ function TableView(instance) {
         calc.endColumn = Math.min(calc.endColumn + offset, cols - 1);
       }
       instance.runHooks('afterViewportColumnCalculatorOverride', calc);
-    }
+    },
+    width: that.settings.width,
+    height: that.settings.height
   };
 
   Handsontable.hooks.run(instance, 'beforeInitWalkontable', walkontableConfig);

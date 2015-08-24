@@ -1,4 +1,3 @@
-
 import {
   getStyle,
   getTrimmingContainer,
@@ -7,7 +6,7 @@ import {
   offset,
   removeClass,
   removeTextNodes,
-    } from './../../../helpers/dom/element';
+} from './../../../helpers/dom/element';
 import {WalkontableCellCoords} from './cell/coords';
 import {WalkontableCellRange} from './cell/range';
 import {WalkontableColumnFilter} from './filter/column';
@@ -164,6 +163,24 @@ class WalkontableTable {
         this.holder.style.height = getStyle(trimmingElement, 'height');
         this.holder.style.overflow = '';
       } else {
+
+        let heightSetting = this.wot.getSetting('height');
+        let widthSetting = this.wot.getSetting('width');
+
+        if(heightSetting !== null || widthSetting !== null) {
+          this.holder.style.overflow = '';
+          this.wtRootElement.style.overflow = 'hidden';
+        }
+
+        if (heightSetting !== null) {
+          this.holder.style['overflow-x'] = 'visible';
+          return;
+
+        } else if (widthSetting !== null) {
+          this.holder.style['overflow-y'] = 'visible';
+          return;
+        }
+
         this.holder.style.overflow = 'visible';
         this.wtRootElement.style.overflow = 'visible';
       }
@@ -195,8 +212,8 @@ class WalkontableTable {
       let startRow;
 
       if (this.wot.cloneOverlay instanceof WalkontableDebugOverlay ||
-          this.wot.cloneOverlay instanceof WalkontableTopOverlay ||
-          this.wot.cloneOverlay instanceof WalkontableCornerOverlay) {
+        this.wot.cloneOverlay instanceof WalkontableTopOverlay ||
+        this.wot.cloneOverlay instanceof WalkontableCornerOverlay) {
         startRow = 0;
       } else {
         startRow = this.wot.wtViewport.rowsRenderCalculator.startRow;
@@ -204,8 +221,8 @@ class WalkontableTable {
       let startColumn;
 
       if (this.wot.cloneOverlay instanceof WalkontableDebugOverlay ||
-          this.wot.cloneOverlay instanceof WalkontableLeftOverlay ||
-          this.wot.cloneOverlay instanceof WalkontableCornerOverlay) {
+        this.wot.cloneOverlay instanceof WalkontableLeftOverlay ||
+        this.wot.cloneOverlay instanceof WalkontableCornerOverlay) {
         startColumn = 0;
       } else {
         startColumn = this.wot.wtViewport.columnsRenderCalculator.startColumn;

@@ -49,17 +49,26 @@ class WalkontableCornerOverlay extends WalkontableOverlay {
       let right = Math.ceil(box.right);
       let finalLeft;
       let finalTop;
+      let heightSetting = this.wot.getSetting('height');
+      let widthSetting = this.wot.getSetting('width');
 
-      if (left < 0 && (right - overlayRoot.offsetWidth) > 0) {
-        finalLeft = -left + 'px';
-      } else {
-        finalLeft = '0';
+      finalLeft = this.wot.wtTable.hider.style.left;
+      finalLeft = finalLeft === '' ? 0 : finalLeft;
+
+      if(widthSetting === null) {
+        if (left < 0 && (right - overlayRoot.offsetWidth) > 0) {
+          finalLeft = -left + 'px';
+        } else {
+          finalLeft = '0';
+        }
       }
 
-      if (top < 0 && (bottom - overlayRoot.offsetHeight) > 0) {
-        finalTop = -top + 'px';
-      } else {
-        finalTop = '0';
+      if(heightSetting === null) {
+        if (top < 0 && (bottom - overlayRoot.offsetHeight) > 0) {
+          finalTop = -top + 'px';
+        } else {
+          finalTop = '0';
+        }
       }
       setOverlayPosition(overlayRoot, finalLeft, finalTop);
     }

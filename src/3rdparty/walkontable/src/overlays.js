@@ -1,10 +1,9 @@
-
 import {
   getScrollableElement,
   getScrollbarWidth,
   getScrollLeft,
   getScrollTop,
-    } from './../../../helpers/dom/element';
+} from './../../../helpers/dom/element';
 import {EventManager} from './../../../eventManager';
 import {WalkontableCornerOverlay} from './overlay/corner';
 import {WalkontableDebugOverlay} from './overlay/debug';
@@ -93,6 +92,10 @@ class WalkontableOverlays {
 
     this.eventManager.addEventListener(this.mainTableScrollableElement, 'scroll', (event) => this.onTableScroll(event));
 
+    if (this.topOverlay.trimmingContainer === window && (this.wot.getSetting('height') || this.wot.getSetting('width'))) {
+      this.eventManager.addEventListener(window, 'scroll', (event) => this.onTableScroll(event));
+    }
+
     if (this.topOverlay.needFullRender) {
       this.eventManager.addEventListener(this.topOverlay.clone.wtTable.holder, 'scroll', (event) => this.onTableScroll(event));
       this.eventManager.addEventListener(this.topOverlay.clone.wtTable.holder, 'wheel', (event) => this.onTableScroll(event));
@@ -139,8 +142,7 @@ class WalkontableOverlays {
     }
     // For key press, sync only master -> overlay position because while pressing Walkontable.render is triggered
     // by hot.refreshBorder
-    if (this.keyPressed && this.mainTableScrollableElement !== window &&
-        !event.target.contains(this.mainTableScrollableElement)) {
+    if (this.keyPressed && this.mainTableScrollableElement !== window && !event.target.contains(this.mainTableScrollableElement)) {
       return;
     }
     if (event.type === 'scroll') {
@@ -199,6 +201,17 @@ class WalkontableOverlays {
     return false;
   }
 
+  limitedDimensions(event, dimension) {
+    if (event.target === window || event.target === document) {
+
+      if (this.wot.getSetting('width') !== null && dimension === 'left') {
+        return this.mainTableScrollableElement.scrollLeft;
+      } else if (this.wot.getSetting('height') !== null && dimension === 'top') {
+        return this.mainTableScrollableElement.scrollTop;
+      }
+    }
+  }
+
   /**
    * Synchronize scroll position between master table and overlay table
    *
@@ -232,8 +245,12 @@ class WalkontableOverlays {
       target = window;
     }
 
+    if (target === window && (this.wot.getSetting('width') !== null || this.wot.getSetting('height') !== null)) {
+      master = window;
+    }
+
     if (target === master) {
-      tempScrollValue = getScrollLeft(target);
+      tempScrollValue = this.limitedDimensions(event, 'left') || getScrollLeft(target);
 
       // if scrolling the master table - populate the scroll values to both top and left overlays
       if (this.overlayScrollPositions.master.left !== tempScrollValue) {
@@ -244,7 +261,7 @@ class WalkontableOverlays {
           topOverlay.scrollLeft = tempScrollValue;
         }
       }
-      tempScrollValue = getScrollTop(target);
+      tempScrollValue = this.limitedDimensions(event, 'top') || getScrollTop(target);
 
       if (this.overlayScrollPositions.master.top !== tempScrollValue) {
         this.overlayScrollPositions.master.top = tempScrollValue;

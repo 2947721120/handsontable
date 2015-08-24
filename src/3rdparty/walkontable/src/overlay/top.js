@@ -50,15 +50,19 @@ class WalkontableTopOverlay extends WalkontableOverlay {
       let bottom = Math.ceil(box.bottom);
       let finalLeft;
       let finalTop;
+      let heightSetting = this.wot.getSetting('height');
 
       finalLeft = this.wot.wtTable.hider.style.left;
       finalLeft = finalLeft === '' ? 0 : finalLeft;
 
-      if (top < 0 && (bottom - overlayRoot.offsetHeight) > 0) {
-        finalTop = -top;
-      } else {
-        finalTop = 0;
+      if(heightSetting === null) {
+        if (top < 0 && (bottom - overlayRoot.offsetHeight) > 0) {
+          finalTop = -top;
+        } else {
+          finalTop = 0;
+        }
       }
+
       headerPosition = finalTop;
       finalTop = finalTop + 'px';
 
@@ -135,8 +139,9 @@ class WalkontableTopOverlay extends WalkontableOverlay {
     let overlayRoot = this.clone.wtTable.holder.parentNode;
     let overlayRootStyle = overlayRoot.style;
     let tableHeight;
+    let widthSetting = this.wot.getSetting('width');
 
-    if (this.trimmingContainer !== window) {
+    if (this.trimmingContainer !== window || this.trimmingContainer === window && widthSetting !== null) {
       overlayRootStyle.width = this.wot.wtViewport.getWorkspaceWidth() - scrollbarWidth + 'px';
     }
     this.clone.wtTable.holder.style.width = overlayRootStyle.width;
@@ -234,7 +239,12 @@ class WalkontableTopOverlay extends WalkontableOverlay {
    * @returns {Number}
    */
   getTableParentOffset() {
-    if (this.mainTableScrollableElement === window) {
+    let currentScrollableElement = this.mainTableScrollableElement;
+    if(this.trimmingContainer === window && this.wot.getSetting('width') !== null) {
+      currentScrollableElement = window;
+    }
+
+    if (currentScrollableElement === window) {
       return this.wot.wtTable.holderOffset.top;
 
     } else {

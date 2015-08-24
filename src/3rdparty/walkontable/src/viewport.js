@@ -49,11 +49,6 @@ class WalkontableViewport {
     let height = 0;
 
     if (trimmingContainer === window) {
-      let heightSetting = this.wot.getSetting('height');
-
-      if(heightSetting !== null) {
-        return heightSetting;
-      }
 
       height = document.documentElement.clientHeight;
 

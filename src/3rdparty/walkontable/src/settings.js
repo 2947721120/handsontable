@@ -59,7 +59,6 @@ class WalkontableSettings {
       viewportRowCalculatorOverride: null,
       viewportColumnCalculatorOverride: null,
       width: null,
-      height: null,
 
       //callbacks
       onCellMouseDown: null,

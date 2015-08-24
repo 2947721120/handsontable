@@ -387,8 +387,7 @@ function TableView(instance) {
       }
       instance.runHooks('afterViewportColumnCalculatorOverride', calc);
     },
-    width: that.settings.width,
-    height: that.settings.height
+    width: that.settings.width
   };
 
   Handsontable.hooks.run(instance, 'beforeInitWalkontable', walkontableConfig);

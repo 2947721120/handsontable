@@ -92,7 +92,7 @@ class WalkontableOverlays {
 
     this.eventManager.addEventListener(this.mainTableScrollableElement, 'scroll', (event) => this.onTableScroll(event));
 
-    if (this.topOverlay.trimmingContainer === window && (this.wot.getSetting('height') || this.wot.getSetting('width'))) {
+    if (this.topOverlay.trimmingContainer === window && this.wot.getSetting('width')) {
       this.eventManager.addEventListener(window, 'scroll', (event) => this.onTableScroll(event));
     }
 
@@ -201,13 +201,18 @@ class WalkontableOverlays {
     return false;
   }
 
+  /**
+   * Return the dimensions data after limiting them to the correct scrollable container
+   *
+   * @param {Event} event
+   * @param {String} dimension
+   * @returns {Number}
+   */
   limitedDimensions(event, dimension) {
     if (event.target === window || event.target === document) {
 
       if (this.wot.getSetting('width') !== null && dimension === 'left') {
         return this.mainTableScrollableElement.scrollLeft;
-      } else if (this.wot.getSetting('height') !== null && dimension === 'top') {
-        return this.mainTableScrollableElement.scrollTop;
       }
     }
   }
@@ -245,7 +250,7 @@ class WalkontableOverlays {
       target = window;
     }
 
-    if (target === window && (this.wot.getSetting('width') !== null || this.wot.getSetting('height') !== null)) {
+    if (target === window && this.wot.getSetting('width') !== null) {
       master = window;
     }
 

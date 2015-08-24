@@ -164,19 +164,14 @@ class WalkontableTable {
         this.holder.style.overflow = '';
       } else {
 
-        let heightSetting = this.wot.getSetting('height');
         let widthSetting = this.wot.getSetting('width');
 
-        if(heightSetting !== null || widthSetting !== null) {
+        if(widthSetting !== null) {
           this.holder.style.overflow = '';
           this.wtRootElement.style.overflow = 'hidden';
         }
 
-        if (heightSetting !== null) {
-          this.holder.style['overflow-x'] = 'visible';
-          return;
-
-        } else if (widthSetting !== null) {
+        if (widthSetting !== null) {
           this.holder.style['overflow-y'] = 'visible';
           return;
         }

@@ -49,7 +49,6 @@ class WalkontableLeftOverlay extends WalkontableOverlay {
       let right = Math.ceil(box.right);
       let finalLeft;
       let finalTop;
-      let heightSetting = this.wot.getSetting('height');
       let widthSetting = this.wot.getSetting('width');
 
       finalTop = this.wot.wtTable.hider.style.top;

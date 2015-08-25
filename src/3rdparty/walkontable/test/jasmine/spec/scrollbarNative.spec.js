@@ -1,10 +1,10 @@
-describe('WalkontableScrollbarNative', function () {
+describe('WalkontableScrollbarNative', function() {
   var $table
     , $container
     , $wrapper
     , debug = false;
 
-  beforeEach(function () {
+  beforeEach(function() {
     $wrapper = $('<div></div>').css({'overflow': 'hidden'});
     $wrapper.width(100).height(200);
     $container = $('<div></div>');
@@ -15,14 +15,14 @@ describe('WalkontableScrollbarNative', function () {
     createDataArray();
   });
 
-  afterEach(function () {
+  afterEach(function() {
     if (!debug) {
       $('.wtHolder').remove();
     }
     $wrapper.remove();
   });
 
-  it("initial render should be no different than the redraw (vertical)", function () {
+  it("initial render should be no different than the redraw (vertical)", function() {
     createDataArray(100, 1);
 
     var wt = new Walkontable({
@@ -39,7 +39,7 @@ describe('WalkontableScrollbarNative', function () {
     expect($table.find('td').length).toEqual(tds);
   });
 
-  it("initial render should be no different than the redraw (horizontal)", function () {
+  it("initial render should be no different than the redraw (horizontal)", function() {
     createDataArray(1, 50);
 
     var wt = new Walkontable({
@@ -56,7 +56,7 @@ describe('WalkontableScrollbarNative', function () {
     expect($table.find('td').length).toEqual(tds);
   });
 
-  it("scrolling 50px down should render 2 more rows", function () {
+  it("scrolling 50px down should render 2 more rows", function() {
     createDataArray(20, 4);
 
     var wt = new Walkontable({
@@ -75,7 +75,7 @@ describe('WalkontableScrollbarNative', function () {
     expect(wt.wtTable.getLastRenderedRow()).toEqual(lastRenderedRow + 2);
   });
 
-  it("should recognize the scrollHandler properly, even if the 'overflow' property is assigned in an external stylesheet", function () {
+  it("should recognize the scrollHandler properly, even if the 'overflow' property is assigned in an external stylesheet", function() {
     $wrapper.css({
       'overflow': ''
     });
@@ -92,5 +92,26 @@ describe('WalkontableScrollbarNative', function () {
 
     wt.wtOverlays.topOverlay.scrollTo(3);
     expect($(wt.wtTable.holder).scrollTop()).toEqual(69);
+  });
+
+  it("should allow using both window scrollbar for vertical scrolling and 'internal' scrollbar for horizontal scrolling", function() {
+    $wrapper.css({
+      'overflow': ''
+    });
+
+    createDataArray(150, 40);
+    var wt = new Walkontable({
+      table: $table[0],
+      data: getData,
+      totalRows: getTotalRows,
+      totalColumns: getTotalColumns,
+      width: 400
+
+    });
+    wt.draw();
+
+    expect(wt.wtTable.holder.offsetHeight).toEqual(wt.wtTable.holder.scrollHeight + Handsontable.Dom.getScrollbarWidth());
+    expect(wt.wtTable.holder.offsetWidth).toBeLessThan(wt.wtTable.holder.scrollWidth + Handsontable.Dom.getScrollbarWidth());
+
   });
 });

@@ -96,7 +96,7 @@ AutocompleteEditor.prototype.open = function() {
       // workaround for <strong> text overlapping the dropdown, not really accurate
       let autoWidths = this.getPlugin('autoColumnSize').widths;
 
-      if(autoWidths[col]) {
+      if (autoWidths[col]) {
         width = autoWidths[col];
       }
 

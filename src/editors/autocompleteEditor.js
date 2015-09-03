@@ -40,7 +40,7 @@ function onBeforeKeyDown(event) {
   var editor = this.getActiveEditor();
 
   if (isPrintableChar(event.keyCode) || event.keyCode === KEY_CODES.BACKSPACE ||
-    event.keyCode === KEY_CODES.DELETE || event.keyCode === KEY_CODES.INSERT) {
+      event.keyCode === KEY_CODES.DELETE || event.keyCode === KEY_CODES.INSERT) {
     var timeOffset = 0;
 
     // on ctl+c / cmd+c don't update suggestion list

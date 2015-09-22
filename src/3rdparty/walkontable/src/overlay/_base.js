@@ -80,6 +80,13 @@ class WalkontableOverlay {
   }
 
   /**
+   * Update the trimming container element
+   */
+  updateTrimmingContainer() {
+    this.trimmingContainer = getTrimmingContainer(this.hider.parentNode.parentNode);
+  }
+
+  /**
    * Checks if overlay should be fully rendered
    *
    * @returns {Boolean}

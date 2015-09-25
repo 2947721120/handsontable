@@ -3845,7 +3845,7 @@ DefaultSettings.prototype = {
 
   /**
    * @description
-   * Defines whether Handsontable should trim the whitespace at the begging and the end of the cell contents
+   * Defines whether Handsontable should trim the whitespace at the begging and the end of the cell's contents.
    *
    * @type {Boolean}
    * @default true
@@ -3856,9 +3856,9 @@ DefaultSettings.prototype = {
   title: void 0,
 
   /**
-   * Data template for `'checkbox'` type when checkbox is checked.
+   * Data template for the `'checkbox'` type, when the checkbox is checked.
    *
-   * Option desired for cell which `'checkbox'` type.
+   * Option desired for cell with a  `'checkbox'` type defined.
    *
    * @type {Boolean|String}
    * @default true
@@ -3866,9 +3866,9 @@ DefaultSettings.prototype = {
   checkedTemplate: void 0,
 
   /**
-   * Data template for `'checkbox'` type when checkbox is unchecked.
+   * Data template for the `'checkbox'` type, when the checkbox is unchecked.
    *
-   * Option desired for cell which `'checkbox'` type.
+   * Option desired for cells with a `'checkbox'` type defined.
    *
    * @type {Boolean|String}
    * @default false
@@ -3877,16 +3877,16 @@ DefaultSettings.prototype = {
 
   /**
    * @description
-   * Object which describes if renderer should create checkbox element with label element as a parent. Option desired for
-   * cell which [checkbox](http://docs.handsontable.com/demo-checkbox.html) type.
+   * Object which describes if renderer should create a checkbox element with a label element as a parent. Option desired for
+   * cell with a [checkbox](http://docs.handsontable.com/demo-checkbox.html) type defined.
    *
-   * By default [checkbox](http://docs.handsontable.com/demo-checkbox.html) renderer is rendered without a label.
+   * By default [checkbox](http://docs.handsontable.com/demo-checkbox.html) renderer does not render a label.
    *
    * Possible object properties:
-   *  * `property` - String which describes from what data object property will be used as a label.
-   * text (eg. `label: {property: 'name.last'}`). This option works only if data was passed as array of objects.
-   *  * `position` - String which describes where to place label text (before or after checkbox element).
-   * Valid value is: `'before'` or '`after`'. Default is `'after'`.
+   *  * `property` - String specifying the data object property, which will be used as a label.
+   * text (eg. `label: {property: 'name.last'}`). This option works only if data was passed as an array of objects.
+   *  * `position` - String which describes where to place label text (before or after the checkbox element).
+   * Valid values are: `'before'` or '`after`'. The default value is `'after'`.
    *  * `value` - String or Function which will be used as label text.
    *
    *
@@ -3899,13 +3899,13 @@ DefaultSettings.prototype = {
   /**
    * Display format. See http://numeric.com.
    *
-   * Option desired for cell which `'numeric'` type.
+   * Option desired for cell with a `'numeric'` type assigned.
    */
   format: void 0,
 
   /**
    * @description
-   * Language display format. See [numericjs](http://numeric.com). Option desired for cell which [numeric](http://docs.handsontable.com/demo-numeric.html) type.
+   * Language display format. See [numericjs](http://numeric.com). Option desired for cells with a [numeric](http://docs.handsontable.com/demo-numeric.html) type assigned.
    *
    * @type {String}
    * @default 'en'
@@ -3914,21 +3914,21 @@ DefaultSettings.prototype = {
 
   /**
    * @description
-   * Data source for cell with [select](http://docs.handsontable.com/demo-select.html) type.
+   * Data source for cells with a [select](http://docs.handsontable.com/demo-select.html) type assigned.
    *
    * @type {Array}
    */
   selectOptions: void 0,
 
   /**
-   * Enables or disables autoColumnSize plugin. Default value is `undefined` which is the same effect as `true`.
-   * Disable this plugin can increase performance.
+   * Enables or disables the autoColumnSize plugin. Default value is `undefined` which has the same effect as `true`.
+   * Disabling this plugin can increase performance.
    *
-   * Column width calculations are divided into sync and async part. Each of this part has own advantages and
-   * disadvantages. Synchronous counting is faster but it blocks browser UI and asynchronous is slower but it does not
-   * block Browser UI.
+   * Column width calculations are divided into sync and async part. Each of this part has its own advantages and
+   * disadvantages. Synchronous counting is faster but it blocks the browser's UI, while asynchronous is slower but it does not
+   * block the browser's UI.
    *
-   * To configure this sync/async line you can pass absolute value (columns) or percentage.
+   * To configure this sync/async aspect ratio, you can pass an absolute value (number of columns) or a percentage value.
    * @example
    * ```js
    * ...
@@ -3950,14 +3950,14 @@ DefaultSettings.prototype = {
   autoColumnSize: void 0,
 
   /**
-   * Enables or disables autoRowSize plugin. Default value is `undefined` which is the same effect as `true`.
-   * Disable this plugin can increase performance.
+   * Enables or disables autoRowSize plugin. Default value is `undefined` which has the same effect as `true`.
+   * Disabling this plugin can increase performance.
    *
-   * Row height calculations are divided into sync and async part. Each of this part has own advantages and
-   * disadvantages. Synchronous counting is faster but it blocks browser UI and asynchronous is slower but it does not
-   * block Browser UI.
+   * Row height calculations are divided into sync and async part. Each of this parts has its own advantages and
+   * disadvantages. Synchronous counting is faster, but it blocks the browser's UI, while asynchronous is slower, but it does not
+   * block the browser's UI.
    *
-   * To configure this sync/async line you can pass absolute value (rows) or percentage.
+   * To configure this sync/async aspect ratio, you can pass an absolute value (number of rows) or a percentage value.
    * @example
    * ```js
    * ...
@@ -3981,7 +3981,7 @@ DefaultSettings.prototype = {
   /**
    * Date validation format.
    *
-   * Option desired for cell which `'date'` type.
+   * Option desired for cells of the `'date'` type.
    *
    * @type {String}
    * @default 'DD/MM/YYYY'
@@ -3991,7 +3991,7 @@ DefaultSettings.prototype = {
   /**
    * If `true` then dates will be automatically formatted to match the desired format.
    *
-   * Option desired for cell which `'date'` type.
+   * Option desired for cells of the `'date'` type.
    *
    * @type {Boolean}
    * @default false
@@ -4001,19 +4001,41 @@ DefaultSettings.prototype = {
   /**
    * Definition of default value which will fill empty cells.
    *
-   * Option desired for cell which `'date'` type.
+   * Option desired for cells of the `'date'` type.
    *
    * @type {String}
    */
   defaultDate: void 0,
 
   /**
-   * If typed `true` value entered into cell must match to the autocomplete source. Otherwise cell will be invalid.
+   * If defined as `true`, the value entered into cell must match to the Autocomplete source. Otherwise cell will be invalid.
    *
-   * Option desired for cell which `'autocomplete'` type.
+   * Option desired for cells of the `'autocomplete'` type.
    *
    * @type {Boolean}
    */
   strict: void 0,
+  /**
+   * If defined as 'true', the Autocomplete's suggestion list would by sorted by relevance (the closer to the left the match is, the higher the suggestion).
+   *
+   * Option desired for cells of the `'autocomplete'` type.
+   * @type {Boolean}
+   * @default true
+   */
+  sortByRelevance: true,
+  /**
+   * If defined as 'true', the Autocomplete's suggestion list would be updated after each change in the input area.
+   *
+   * @type {Boolean}
+   * @default true
+   */
+  filter: true,
+  /**
+   * If defined as 'true', filtering in the Autocomplete Editor will be case-sensitive.
+   *
+   * @type {Boolean}
+   * @default: false
+   */
+  filteringCaseSensitive: false,
 };
 Handsontable.DefaultSettings = DefaultSettings;

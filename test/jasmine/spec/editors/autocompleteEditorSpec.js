@@ -1899,6 +1899,38 @@ describe('AutocompleteEditor', function() {
     });
   });
 
+  it("should not modify the suggestion lists' order, when the sortByRelevance option is set to false", function() {
+    var choices = [
+      'Wayne','Draven','Banner','Stark','Parker','Kent','Gordon','Kyle','Simmons'
+    ];
+    var hot = handsontable({
+      columns: [
+        {
+          editor: 'autocomplete',
+          source: choices,
+          sortByRelevance: false
+        }
+      ]
+    });
+
+    selectCell(0, 0);
+    keyDownUp('enter');
+    var $editorInput = $('.handsontableInput');
+    $editorInput.val("a");
+    keyDownUp(65); //a
+    Handsontable.Dom.setCaretPosition($editorInput[0], 1);
+
+    waits(30);
+
+    runs(function() {
+      var dropdownList = $('.autocompleteEditor tbody').first();
+
+      for(var i = 1; i <= dropdownList.find('tr').size(); i++) {
+        expect(dropdownList.find('tr:nth-child(' + i + ') td').text()).toEqual(choices[i - 1]);
+      }
+    });
+  });
+
   it("should fire one afterChange event when value is changed", function() {
     var onAfterChange = jasmine.createSpy('onAfterChange');
     var syncSources = jasmine.createSpy('syncSources');

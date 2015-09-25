@@ -1,4 +1,3 @@
-
 import {addClass, hasClass} from './../helpers/dom/element';
 import {eventManager as eventManagerObject} from './../eventManager';
 import {getRenderer, registerRenderer} from './../renderers';
@@ -13,7 +12,7 @@ clonableARROW.className = 'htAutocompleteArrow';
 // this is faster than innerHTML. See: https://github.com/handsontable/handsontable/wiki/JavaScript-&-DOM-performance-tips
 clonableARROW.appendChild(document.createTextNode(String.fromCharCode(9660)));
 
-var wrapTdContentWithWrapper = function(TD, WRAPPER){
+var wrapTdContentWithWrapper = function(TD, WRAPPER) {
   WRAPPER.innerHTML = TD.innerHTML;
   dom.empty(TD);
   TD.appendChild(WRAPPER);
@@ -49,13 +48,23 @@ function autocompleteRenderer(instance, TD, row, col, prop, value, cellPropertie
     //this is faster than innerHTML. See: https://github.com/handsontable/handsontable/wiki/JavaScript-&-DOM-performance-tips
   }
 
+  // GH ref: #2464
+  if (!cellProperties.wordWrap) {
+    var columnWidth = instance.getColWidth(col) - 25;
+    var textDiv = document.createElement('div');
+    textDiv.textContent = TD.textContent.replace(TD.lastElementChild.textContent, '');
+    textDiv.style.width = columnWidth + 'px';
+    textDiv.style.float = 'left';
+    textDiv.style.overflow = 'hidden';
 
+    TD.innerHTML = textDiv.outerHTML + TD.lastElementChild.outerHTML;
+  }
 
   if (!instance.acArrowListener) {
     var eventManager = eventManagerObject(instance);
 
     //not very elegant but easy and fast
-    instance.acArrowListener = function (event) {
+    instance.acArrowListener = function(event) {
       if (hasClass(event.target, 'htAutocompleteArrow')) {
         instance.view.wt.getSetting('onCellDblClick', null, new WalkontableCellCoords(row, col), TD);
       }
@@ -64,7 +73,7 @@ function autocompleteRenderer(instance, TD, row, col, prop, value, cellPropertie
     eventManager.addEventListener(instance.rootElement, 'mousedown', instance.acArrowListener);
 
     //We need to unbind the listener after the table has been destroyed
-    instance.addHookOnce('afterDestroy', function () {
+    instance.addHookOnce('afterDestroy', function() {
       eventManager.destroy();
     });
   }

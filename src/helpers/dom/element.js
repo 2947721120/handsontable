@@ -352,6 +352,10 @@ export function fastInnerHTML(element, content) {
 var textContextSupport = document.createTextNode('test').textContent ? true : false;
 
 export function fastInnerText(element, content) {
+  if (!element) {
+    return;
+  }
+
   var child = element.firstChild;
 
   if (child && child.nodeType === 3 && child.nextSibling === null) {
